@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import AuthButton from "./AuthButton ";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -24,9 +25,7 @@ export default function Navbar() {
             Blog
           </Link>
 
-          <Link href="/signin" className="bg-zinc-100 hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-white py-2 px-4 rounded-lg hover:text-foreground/80">
-            Sign in
-          </Link>
+          <AuthButton />
 
           <ThemeToggle />
         </nav>
