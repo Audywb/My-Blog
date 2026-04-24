@@ -11,6 +11,7 @@ type Props = {
     onChange: (val: string) => void;
     onAddImage: () => void;
     previewImages?: Record<string, string>;
+    disableAddImage?: boolean;
 };
 
 export default function MarkdownEditor({
@@ -18,6 +19,7 @@ export default function MarkdownEditor({
     onChange,
     onAddImage,
     previewImages = {},
+    disableAddImage = false,
 }: Props) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -198,7 +200,7 @@ export default function MarkdownEditor({
                 >
                     List
                 </button>
-                <button type="button" onClick={onAddImage} className="btn">
+                <button type="button" onClick={onAddImage} className="btn" title={disableAddImage ? "ถึงขีดจำกัด 6 รูปแล้ว" : "เพิ่มรูปภาพ"}>
                     <ImageUpIcon size={16} />
                 </button>
             </div>

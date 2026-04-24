@@ -19,10 +19,5 @@ export type Blog = {
     createdAt: Date;
     updatedAt?: Date;
 
-    images?: {
-        id: number;
-        imageUrl: string;
-    }[];
-
     comments?: Comment[];
 };

@@ -17,20 +17,22 @@ export default async function AdminPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-center text-2xl text-zinc-800 dark:text-zinc-50 font-semibold">Admin Dashboard</h1>
+      <h1 className="text-center text-2xl text-zinc-800 dark:text-zinc-50 font-semibold">
+        Hello Admin!
+      </h1>
 
       <div className="container mt-6 space-y-4">
         <section className="max-w-7xl mx-auto px-6 py-10">
           {/* header */}
-          <h2 className="text-xl text-zinc-800 dark:text-zinc-50 font-semibold pb-8">Manage Blogs</h2>
+          <h2 className="text-xl text-zinc-800 dark:text-zinc-50 font-semibold pb-8">
+            Manage Blogs
+          </h2>
           <div className="flex justify-between mb-6">
-            <p className="text-sm text-zinc-500">
-              {blogs.length} posts
-            </p>
+            <p className="text-sm text-zinc-500">{blogs.length} posts</p>
 
             <Link
               href="/admin/blog/create"
-              className="bg-zinc-950 dark:bg-zinc-200 text-white dark:text-zinc-950 px-4 py-2 rounded text-sm"
+              className="bg-zinc-900 dark:bg-zinc-200 text-white dark:text-zinc-900 px-4 py-2 rounded text-sm"
             >
               + Add blog
             </Link>

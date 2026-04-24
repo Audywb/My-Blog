@@ -11,6 +11,9 @@ export async function getBlogs() {
             createdAt: "desc",
         },
         take: 10,
+        include: {
+            comments: true,
+        },
     });
 }
 
@@ -20,6 +23,9 @@ export async function getAllBlogs() {
             createdAt: "desc",
         },
         take: 10,
+        include: {
+            comments: true,
+        },
     });
 }
 
@@ -27,7 +33,6 @@ export async function getBlogByIdAdmin(id: number) {
     return await prisma.blog.findUnique({
         where: { id },
         include: {
-            images: true,
             comments: true,
         },
     });
@@ -51,12 +56,12 @@ export async function getBlogBySlug(slug: string) {
 }
 
 export async function incrementView(slug: string) {
-  await prisma.blog.update({
-    where: { slug },
-    data: {
-      viewCount: {
-        increment: 1,
-      },
-    },
-  });
+    await prisma.blog.update({
+        where: { slug },
+        data: {
+            viewCount: {
+                increment: 1,
+            },
+        },
+    });
 }

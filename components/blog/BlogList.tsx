@@ -8,6 +8,7 @@ type Props = {
 };
 
 export default function BlogList({ blogs, variant }: Props) {
+
     return (
         <div className="space-y-4 grid gap-8 lg:grid-cols-3">
             {blogs.map((blog) => (

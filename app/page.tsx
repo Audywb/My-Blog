@@ -5,14 +5,8 @@ import BlogList from "@/components/blog/BlogList";
 
 export const metadata: Metadata = {
   title: "My Blog | Next.js 16",
-  description:
-    "My Blog",
-  keywords: [
-    "My Blog",
-    "Next.js",
-    "Node.js 16",
-    "Blog",
-  ],
+  description: "My Blog",
+  keywords: ["My Blog", "Next.js", "Node.js 16", "Blog"],
 };
 
 export default async function Home() {
