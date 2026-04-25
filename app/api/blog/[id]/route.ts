@@ -1,27 +1,32 @@
+import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function PUT(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> }
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const blogId = Number(id);
+  const auth = await requireAdmin();
 
-    const body = await req.json();
+  if ("error" in auth) return auth.error;
 
-    const { title, slug, content, excerpt, coverImage } = body;
+  const { id } = await params;
+  const blogId = Number(id);
 
-    const updated = await prisma.blog.update({
-        where: { id: blogId },
-        data: {
-            title,
-            slug,
-            content,
-            excerpt,
-            coverImage,
-        },
-    });
+  const body = await req.json();
 
-    return NextResponse.json(updated);
+  const { title, slug, content, excerpt, coverImage } = body;
+
+  const updated = await prisma.blog.update({
+    where: { id: blogId },
+    data: {
+      title,
+      slug,
+      content,
+      excerpt,
+      coverImage,
+    },
+  });
+
+  return NextResponse.json(updated);
 }

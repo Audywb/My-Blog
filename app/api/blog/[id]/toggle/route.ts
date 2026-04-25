@@ -1,38 +1,37 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
-export async function POST(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> }
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
+  const auth = await requireAdmin();
 
-    const blogId = Number(id);
+  if ("error" in auth) return auth.error;
 
-    if (isNaN(blogId)) {
-        return NextResponse.json(
-            { message: "Invalid id" },
-            { status: 400 }
-        );
-    }
+  const { id } = await params;
 
-    const blog = await prisma.blog.findUnique({
-        where: { id: blogId },
-    });
+  const blogId = Number(id);
 
-    if (!blog) {
-        return NextResponse.json(
-            { message: "Not found" },
-            { status: 404 }
-        );
-    }
+  if (isNaN(blogId)) {
+    return NextResponse.json({ message: "Invalid id" }, { status: 400 });
+  }
 
-    const updated = await prisma.blog.update({
-        where: { id: blogId },
-        data: {
-            published: !blog.published,
-        },
-    });
+  const blog = await prisma.blog.findUnique({
+    where: { id: blogId },
+  });
 
-    return NextResponse.json(updated);
+  if (!blog) {
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
+  }
+
+  const updated = await prisma.blog.update({
+    where: { id: blogId },
+    data: {
+      published: !blog.published,
+    },
+  });
+
+  return NextResponse.json(updated);
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Blog } from "@/types/blog";
 import { ImagePlus, Loader2 } from "lucide-react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 type ImageItem = {
   id: string;
@@ -20,12 +21,12 @@ type Props = {
 async function uploadImage(file: File): Promise<string> {
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "portfolio");
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/didmjbzkg/image/upload",
-    { method: "POST", body: form },
-  );
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: form,
+  });
+
   const data = await res.json();
   return data.secure_url;
 }
@@ -33,6 +34,7 @@ async function uploadImage(file: File): Promise<string> {
 export default function EditBlogForm({ blog }: Props) {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(blog.title);
   const [slug, setSlug] = useState(blog.slug);
   const [excerpt, setExcerpt] = useState(blog.excerpt);
@@ -41,7 +43,7 @@ export default function EditBlogForm({ blog }: Props) {
   const [imageFiles, setImageFiles] = useState<ImageItem[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(
-    blog.coverImage || "",
+    blog.coverImage || ""
   );
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -49,7 +51,7 @@ export default function EditBlogForm({ blog }: Props) {
   const isImageLimitReached = imageCount >= 6;
 
   const previewImages = Object.fromEntries(
-    imageFiles.map(({ id, objectUrl }) => [id, objectUrl]),
+    imageFiles.map(({ id, objectUrl }) => [id, objectUrl])
   );
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -87,45 +89,64 @@ export default function EditBlogForm({ blog }: Props) {
   }
 
   async function handleSubmit() {
-    if (!title || !slug) {
-      alert("กรุณากรอก Title และ Slug");
-      return;
-    }
+    if (loading) return;
 
-    let coverUrl = blog.coverImage;
+    try {
+      setLoading(true);
 
-    if (imageFile) {
-      setUploadingImage(true);
-      coverUrl = await uploadImage(imageFile);
+      if (!title || !slug) {
+        toast.error("กรุณากรอก Title และ Slug");
+        return;
+      }
+
+      let coverUrl = blog.coverImage;
+
+      if (imageFile) {
+        setUploadingImage(true);
+        coverUrl = await uploadImage(imageFile);
+        setUploadingImage(false);
+      }
+
+      const uploaded = await Promise.all(
+        imageFiles.map(async ({ id, file }) => ({
+          id,
+          url: await uploadImage(file),
+        }))
+      );
+
+      let finalContent = content;
+      uploaded.forEach(({ id, url }) => {
+        finalContent = finalContent.replaceAll(`(${id})`, `(${url})`);
+      });
+
+      const res = await fetch(`/api/blog/${blog.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug,
+          excerpt,
+          content: finalContent,
+          coverImage: coverUrl,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "อัปเดตไม่สำเร็จ");
+        return;
+      }
+
+      toast.success("อัปเดตสำเร็จ");
+      router.push("/admin");
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error");
+    } finally {
       setUploadingImage(false);
+      setLoading(false);
     }
-
-    const uploaded = await Promise.all(
-      imageFiles.map(async ({ id, file }) => ({
-        id,
-        url: await uploadImage(file),
-      })),
-    );
-
-    let finalContent = content;
-    uploaded.forEach(({ id, url }) => {
-      finalContent = finalContent.replaceAll(`(${id})`, `(${url})`);
-    });
-
-    await fetch(`/api/blog/${blog.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        slug,
-        excerpt,
-        content: finalContent,
-        coverImage: coverUrl,
-      }),
-    });
-
-    alert("Updated!");
-    router.push("/admin");
   }
 
   return (
@@ -269,12 +290,19 @@ export default function EditBlogForm({ blog }: Props) {
         <div className="flex justify-end pt-2 pb-10">
           <button
             onClick={handleSubmit}
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg text-sm font-semibold hover:opacity-80 transition cursor-pointer"
+            disabled={loading}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition cursor-pointer
+    ${
+      loading
+        ? "bg-zinc-400 cursor-not-allowed"
+        : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-80"
+    }`}
           >
-            Update Blog
+            {loading && <Loader2 size={16} className="animate-spin" />}
+            {loading ? "กำลังบันทึก..." : "Create Blog"}
           </button>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -77,6 +77,21 @@ export async function getBlogBySlug(slug: string) {
   });
 }
 
+export async function getBlogBySlugAdmin(slug: string) {
+  return await prisma.blog.findFirst({
+    where: {
+      slug
+    },
+    include: {
+      comments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+}
+
 export async function incrementView(slug: string) {
   await prisma.blog.update({
     where: { slug },

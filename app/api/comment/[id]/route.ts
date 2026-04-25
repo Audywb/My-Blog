@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function PATCH(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> }
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const body = await req.json();
+  const auth = await requireAdmin();
 
-    console.log({
-        id,
-        body
-    })
+  if ("error" in auth) return auth.error;
 
-    const { status } = body;
+  const { id } = await params;
+  const body = await req.json();
 
-    const updated = await prisma.comment.update({
-        where: { id: Number(id) },
-        data: { status },
-    });
+  const { status } = body;
 
-    return NextResponse.json(updated);
+  const updated = await prisma.comment.update({
+    where: { id: Number(id) },
+    data: { status },
+  });
+
+  return NextResponse.json(updated);
 }

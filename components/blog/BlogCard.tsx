@@ -23,7 +23,7 @@ export default function BlogCard({ blog, variant = "public" }: Props) {
 
   async function handleToggle() {
     await fetch(`/api/blog/${blog.id}/toggle`, {
-      method: "POST",
+      method: "PATCH",
     });
 
     router.refresh();
@@ -80,7 +80,7 @@ export default function BlogCard({ blog, variant = "public" }: Props) {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleToggle}
-                className={`w-10 h-5 rounded-full relative transition ${
+                className={`w-10 h-5 rounded-full relative transition cursor-pointer ${
                   blog.published ? "bg-green-500" : "bg-zinc-300"
                 }`}
               >

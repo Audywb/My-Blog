@@ -1,4 +1,8 @@
-import { getBlogBySlug, incrementView } from "@/lib/actions/blog";
+import {
+  getBlogBySlug,
+  getBlogBySlugAdmin,
+  incrementView,
+} from "@/lib/actions/blog";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -7,6 +11,7 @@ import remarkGfm from "remark-gfm";
 import CommentForm from "@/components/blog/CommentForm";
 import CommentItem from "@/components/blog/CommentItem";
 import { Components } from "react-markdown";
+import AdminControls from "./AdminControls";
 
 // Custom renderer สำหรับ image ใน markdown
 const markdownComponents: Components = {
@@ -18,9 +23,9 @@ const markdownComponents: Components = {
         <Image
           src={imgSrc}
           alt={alt ?? ""}
-          width={900}
-          height={500}
-          className="rounded-lg object-cover w-full max-h-120"
+          width={1080}
+          height={1080}
+          className="rounded-lg object-cover w-full max-h-fit"
           style={{ objectFit: "cover" }}
         />
       </span>
@@ -35,9 +40,13 @@ export default async function BlogDetailPage({
 }) {
   const { slug } = await params;
   const session = await getServerSession(authOptions);
+
   const isAdmin = session?.user?.role === "admin";
 
-  const blog = await getBlogBySlug(slug);
+  const blog = isAdmin
+    ? await getBlogBySlugAdmin(slug)
+    : await getBlogBySlug(slug);
+
   if (!blog) {
     return (
       <div className="min-h-screen flex items-center justify-center text-zinc-400 text-sm">
@@ -54,6 +63,7 @@ export default async function BlogDetailPage({
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950">
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+        {isAdmin && <AdminControls blog={blog} />}
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-zinc-50 mb-4">
@@ -132,7 +142,7 @@ export default async function BlogDetailPage({
             </div>
           ) : (
             <p className="text-sm text-zinc-400 mt-6">
-              ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!
+              ยังไม่มีความคิดเห็น
             </p>
           )}
         </section>

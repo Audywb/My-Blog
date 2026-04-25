@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import MarkdownEditor from "@/components/blog/MarkdownEditor";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 type ImageItem = {
   id: string;
@@ -13,20 +16,18 @@ type ImageItem = {
 async function uploadImage(file: File): Promise<string> {
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "portfolio");
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/didmjbzkg/image/upload",
-    { method: "POST", body: form },
-  );
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: form,
+  });
 
   const data = await res.json();
-  if (!res.ok) throw new Error("Upload failed");
-
   return data.secure_url;
 }
 
 export default function CreateBlogPage() {
+  const router = useRouter();
   const [content, setContent] = useState("");
   const [imageFiles, setImageFiles] = useState<ImageItem[]>([]);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -34,9 +35,10 @@ export default function CreateBlogPage() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const previewImages = Object.fromEntries(
-    imageFiles.map(({ id, objectUrl }) => [id, objectUrl]),
+    imageFiles.map(({ id, objectUrl }) => [id, objectUrl])
   );
 
   const imageCount = imageFiles.length;
@@ -78,40 +80,61 @@ export default function CreateBlogPage() {
   }, [imageFiles, coverPreview]);
 
   async function handleSubmit() {
-    if (!title || !slug || !coverFile) {
-      alert("กรุณากรอก Title, Slug และ Cover Image");
-      return;
+    if (loading) return;
+
+    try {
+      setLoading(true);
+
+      if (!title || !slug || !coverFile) {
+        toast.error("กรุณากรอก Title, Slug และ Cover Image");
+        return;
+      }
+
+      let coverUrl = "";
+      if (coverFile) {
+        coverUrl = await uploadImage(coverFile);
+      }
+
+      const uploaded = await Promise.all(
+        imageFiles.map(async ({ id, file }) => ({
+          id,
+          url: await uploadImage(file),
+        }))
+      );
+
+      let finalContent = content;
+      uploaded.forEach(({ id, url }) => {
+        finalContent = finalContent.replaceAll(`(${id})`, `(${url})`);
+      });
+
+      const res = await fetch("/api/blog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug,
+          excerpt,
+          content: finalContent,
+          coverImage: coverUrl,
+          images: uploaded.map((u) => u.url),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "เกิดข้อผิดพลาด");
+        return;
+      }
+
+      toast.success("สร้าง Blog สำเร็จแล้ว");
+      router.push("/admin");
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error");
+    } finally {
+      setLoading(false);
     }
-
-    let coverUrl = "";
-    if (coverFile) coverUrl = await uploadImage(coverFile);
-
-    const uploaded = await Promise.all(
-      imageFiles.map(async ({ id, file }) => ({
-        id,
-        url: await uploadImage(file),
-      })),
-    );
-
-    let finalContent = content;
-    uploaded.forEach(({ id, url }) => {
-      finalContent = finalContent.replaceAll(`(${id})`, `(${url})`);
-    });
-
-    await fetch("/api/blog", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        slug,
-        excerpt,
-        content: finalContent,
-        coverImage: coverUrl,
-        images: uploaded.map((u) => u.url),
-      }),
-    });
-
-    alert("Created!");
   }
 
   return (
@@ -237,14 +260,19 @@ export default function CreateBlogPage() {
         </section>
 
         {/* Submit */}
-        <div className="flex justify-end pt-2 pb-10">
-          <button
-            onClick={handleSubmit}
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg text-sm font-semibold hover:opacity-80 transition cursor-pointer"
-          >
-            Publish Blog
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition cursor-pointer
+    ${
+      loading
+        ? "bg-zinc-400 cursor-not-allowed"
+        : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-80"
+    }`}
+        >
+          {loading && <Loader2 size={16} className="animate-spin" />}
+          {loading ? "กำลังบันทึก..." : "Create Blog"}
+        </button>
       </div>
     </div>
   );
