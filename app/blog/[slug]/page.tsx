@@ -13,7 +13,6 @@ import CommentItem from "@/components/blog/CommentItem";
 import { Components } from "react-markdown";
 import AdminControls from "./AdminControls";
 
-// Custom renderer สำหรับ image ใน markdown
 const markdownComponents: Components = {
   img: ({ src, alt }) => {
     const imgSrc = typeof src === "string" ? src : "";

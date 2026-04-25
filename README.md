@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Blog App (Next.js 16 + Prisma 7)
 
-## Getting Started
+A full-stack blog platform built with **Next.js 16 (App Router)**, **Prisma 7**, and **NextAuth**.
 
-First, run the development server:
+---
+
+## 🌐 Demo
+
+    https://my-blog-sand-seven.vercel.app/
+
+---
+
+## 📦 Repository
+
+    https://github.com/Audywb/My-Blog.git
+
+---
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- Prisma 7
+- PostgreSQL (NeonDB)
+- NextAuth (Credentials)
+- TailwindCSS
+- Cloudinary (Image Upload)
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/Audywb/My-Blog.git
+cd My-Blog
+npm install
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_URL=your_neondb_url
+NEXTAUTH_SECRET=your_secret
+CLOUD_NAME=your_cloud_name
+CLOUD_API_KEY=your_api_key
+CLOUD_API_SECRET=your_api_secret
+```
+
+---
+
+## Database Setup
+
+Run migration:
+
+```bash
+npx prisma migrate dev
+```
+
+Generate Prisma client:
+
+```bash
+npx prisma generate
+```
+
+---
+
+## Create Admin User
+
+Seed admin account:
+
+```bash
+npx prisma db seed
+```
+
+Admin credentials are defined in:
+`prisma/seed.ts`
+
+---
+
+## Run Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔐 Authentication
 
-To learn more about Next.js, take a look at the following resources:
+- Login via `/signin`
+- Admin can:
+  - Create / Edit Blog
+  - Publish / Unpublish
+  - Approve / Reject Comments
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+### Blog
+- Markdown content support
+- Image upload via Cloudinary
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Comments
+- User can submit comments
+- Admin approval system (approve / reject)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Admin Dashboard
+- Manage blogs
+- Toggle publish status
+- Moderate comments
+
+---
+
+## Project Structure
+
+```
+app/
+  blog/
+  admin/
+  api/
+components/
+lib/
+prisma/
+types/
+```
+
+---
+
+## ✨ Author
+
+Developed by Woranat Boonanke
