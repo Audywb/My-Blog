@@ -80,7 +80,7 @@ export default function BlogList({
           ไม่พบบทความที่ตรงกับการค้นหา
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {blogs.map((blog) => (
             <BlogCard key={blog.id} blog={blog} variant={variant} />
           ))}
