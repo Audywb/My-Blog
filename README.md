@@ -4,9 +4,9 @@ A full-stack blog platform built with **Next.js 16 (App Router)**, **Prisma 7**,
 
 ---
 
-## Demo
+## 🌐 Demo
 
-    [https://my-blog-sand-seven.vercel.app](https://my-blog-sand-seven.vercel.app)
+https://my-blog-sand-seven.vercel.app
 
 ---
 
