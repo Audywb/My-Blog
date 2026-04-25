@@ -299,7 +299,7 @@ export default function EditBlogForm({ blog }: Props) {
     }`}
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
-            {loading ? "กำลังบันทึก..." : "Create Blog"}
+            {loading ? "กำลังบันทึก..." : "Update Blog"}
           </button>
         </div>
       </div>
