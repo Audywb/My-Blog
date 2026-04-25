@@ -94,7 +94,7 @@ http://localhost:3000
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 - Login via `/signin`
 - Admin can:
@@ -136,6 +136,6 @@ types/
 
 ---
 
-## ✨ Author
+## Author
 
-Developed by Woranat Boonanke
+Developed by Woranat Boonanake
