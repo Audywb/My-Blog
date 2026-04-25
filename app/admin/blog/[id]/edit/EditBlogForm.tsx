@@ -129,7 +129,7 @@ export default function EditBlogForm({ blog }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-10">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="max-w-3xl mx-auto px-5 sm:px-8 space-y-8">
         {/* Page Header */}
         <div className="border-b border-zinc-200 dark:border-zinc-800 pb-6">

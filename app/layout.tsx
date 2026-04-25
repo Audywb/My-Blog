@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,38 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>
           <Navbar />
-          {children}
+          <main className="flex-1">{children}</main>
+          <footer className="border-t border-zinc-200 dark:border-zinc-800">
+            <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+              <p>
+                © {new Date().getFullYear()}{" "}
+                <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                  Woranat Boonanake
+                </span>{" "}
+                · Full-Stack Developer
+              </p>
+
+              <div className="flex items-center gap-5">
+                <Link
+                  href="https://github.com/Audywb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                >
+                  GitHub
+                </Link>
+                <span className="w-px h-4 bg-zinc-300 dark:bg-zinc-700" />
+                <Link
+                  href="https://audydev.me"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                >
+                  audydev.me
+                </Link>
+              </div>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>
