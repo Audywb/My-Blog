@@ -37,7 +37,7 @@ The database is designed with three main entities: **User**, **Blog**, and **Com
 
 ### ER Diagram
 
-![Database Schema](/MyBlog.png)
+![Database Schema](https://res.cloudinary.com/didmjbzkg/image/upload/v1777197075/MyBlog_hltyom.png)
 
 ## Installation
 
