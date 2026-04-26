@@ -27,6 +27,18 @@ https://my-blog-sand-seven.vercel.app
 
 ---
 
+## Database Schema
+
+The database is designed with three main entities: **User**, **Blog**, and **Comment**.
+
+- A **User** is used for authentication and admin management.
+- A **Blog** stores blog content and metadata.
+- A **Comment** is associated with a blog post and requires admin approval before being displayed.
+
+### ER Diagram
+
+![Database Schema](/MyBlog.png)
+
 ## Installation
 
 ```bash
